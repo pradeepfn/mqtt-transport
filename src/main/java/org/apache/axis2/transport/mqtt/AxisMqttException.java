@@ -16,5 +16,22 @@ package org.apache.axis2.transport.mqtt;/*
 * under the License.
 */
 
-public class AxisMqttException {
+public class AxisMqttException extends  RuntimeException{
+    public AxisMqttException() {
+        super();
+    }
+
+    public AxisMqttException(Throwable cause) {
+        super(cause);
+    }
+
+    public AxisMqttException(String message) {
+        super(message);
+    }
+
+    public AxisMqttException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+
 }

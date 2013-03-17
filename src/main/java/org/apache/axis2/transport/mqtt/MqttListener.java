@@ -16,5 +16,48 @@ package org.apache.axis2.transport.mqtt;/*
 * under the License.
 */
 
-public class MqttListener {
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.transport.base.AbstractTransportListenerEx;
+
+public class MqttListener extends AbstractTransportListenerEx<MqttEndpoint> {
+
+    public static final String TRANSPORT_NAME = "mqtt";
+    private MqttConnectionFactoryManager connectionFactoryManager;
+
+
+
+    @Override
+    protected void doInit() throws AxisFault {
+        connectionFactoryManager = new MqttConnectionFactoryManager(getTransportInDescription());
+        log.info("MQTT Transport Receiver/Listener initialized...");
+    }
+
+    @Override
+    protected MqttEndpoint createEndpoint() {
+        return new MqttEndpoint(this);
+    }
+
+    @Override
+    protected void startEndpoint(MqttEndpoint mqttEndpoint) throws AxisFault {
+       mqttEndpoint.subscribeToTopic(getConfigurationContext());
+    }
+
+    @Override
+    protected void stopEndpoint(MqttEndpoint mqttEndpoint) {
+        mqttEndpoint.unsubscribeFromTopic();
+    }
+
+    public MqttConnectionFactory getConnectionFactory(AxisService service) {
+
+        Parameter conFacParam = service.getParameter(MqttConstants.PARAM_JMS_CONFAC);
+        // validate connection factory name (specified or default)
+        if (conFacParam != null) {
+            return connectionFactoryManager.getMqttConnectionFactory((String) conFacParam.getValue());
+        } else {
+            return connectionFactoryManager.getMqttConnectionFactory(MqttConstants.DEFAULT_CONFAC_NAME);
+        }
+    }
+
 }

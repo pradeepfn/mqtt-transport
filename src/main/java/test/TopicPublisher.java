@@ -21,7 +21,7 @@ import org.eclipse.paho.client.mqttv3.*;
 public class TopicPublisher {
 
     private static String SERVER_URL = "tcp://m2m.eclipse.org:1883";
-    private static String CLIENT_ID = "pradeepClient@home";
+    private static String CLIENT_ID = "pradeepClientPublisher";
 
     public static void main(String[] args) throws MqttException {
 
@@ -35,10 +35,13 @@ public class TopicPublisher {
 
             public void messageArrived(MqttTopic mqttTopic, MqttMessage mqttMessage) throws Exception {
                 System.out.println("Message arrived...");
+                System.out.println("Topic : " + mqttTopic.toString());
+                System.out.println("Message : " + mqttMessage.toString());
             }
 
             public void deliveryComplete(MqttDeliveryToken mqttDeliveryToken) {
                 System.out.println("Delivery complete....");
+                System.out.println("Delivery Token : " + mqttDeliveryToken.toString());
             }
         });
         mqttClient.connect(cleintOptions); // actual connection happens
@@ -47,7 +50,7 @@ public class TopicPublisher {
             System.out.println("Mqtt client connected successfully...");
             MqttTopic topic = mqttClient.getTopic("testTopic");
             MqttMessage message = new MqttMessage();
-            message.setPayload(new String("Hello World").getBytes());
+            message.setPayload(new String("Hello World2").getBytes());
             message.setRetained(true);
             topic.publish(message);
 

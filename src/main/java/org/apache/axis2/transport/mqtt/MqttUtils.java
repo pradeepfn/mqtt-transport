@@ -16,5 +16,57 @@ package org.apache.axis2.transport.mqtt;/*
 * under the License.
 */
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.builder.Builder;
+import org.apache.axis2.builder.BuilderUtil;
+import org.apache.axis2.builder.SOAPBuilder;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.format.DataSourceMessageBuilder;
+import org.apache.axis2.format.TextMessageBuilder;
+import org.apache.axis2.format.TextMessageBuilderAdapter;
+import org.apache.axis2.transport.TransportUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import javax.mail.internet.ContentType;
+import javax.mail.internet.ParseException;
+import java.io.ByteArrayInputStream;
+
 public class MqttUtils {
+
+    private static  Log log = LogFactory.getLog(MqttUtils.class);
+
+    public static void setSOAPEnvelope(MqttMessage mqttMessage, MessageContext msgContext, String contentType)
+            throws AxisFault, AxisMqttException {
+
+        if (contentType == null) {
+                contentType = "application/octet-stream";
+        }
+
+        int index = contentType.indexOf(';');
+        String type = index > 0 ? contentType.substring(0, index) : contentType;
+        Builder builder = BuilderUtil.getBuilderFromSelector(type, msgContext);
+        if (builder == null) {
+            if (log.isDebugEnabled()) {
+                log.debug("No message builder found for type '" + type + "'. Falling back to SOAP.");
+            }
+            builder = new SOAPBuilder();
+        }
+        msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, "UTF-8");
+        OMElement documentElement = null;
+        try {
+            byte[] bytes = mqttMessage.getPayload();
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+            documentElement = builder.processDocument(byteArrayInputStream,contentType,msgContext);
+        } catch (MqttException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        msgContext.setEnvelope(TransportUtils.createSOAPEnvelope(documentElement));
+    }
+
 }

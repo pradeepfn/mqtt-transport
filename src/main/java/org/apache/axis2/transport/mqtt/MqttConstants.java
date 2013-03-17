@@ -17,4 +17,10 @@ package org.apache.axis2.transport.mqtt;/*
 */
 
 public class MqttConstants {
+    public static final String PARAM_JMS_CONFAC = "transport.mqtt.ConnectionFactory";
+    public static final String DEFAULT_CONFAC_NAME = "default";
+    public static final String MQTT_SERVER_HOST_NAME = "mqtt.server.host.name";
+    public static final String MQTT_SERVER_PORT = "mqtt.server.port";
+    public static final String MQTT_CLIENT_ID = "mqtt.client.id";
+    public static final String MQTT_TOPIC_NAME = "mqtt.topic.name";
 }

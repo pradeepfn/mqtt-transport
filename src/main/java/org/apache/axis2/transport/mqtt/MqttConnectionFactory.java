@@ -16,5 +16,69 @@ package org.apache.axis2.transport.mqtt;/*
 * under the License.
 */
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ParameterIncludeImpl;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
+
+import java.util.Hashtable;
+
 public class MqttConnectionFactory {
+
+    private static final Log log = LogFactory.getLog(MqttConnectionFactory.class);
+
+    private String name;
+
+    private Hashtable<String, String> parameters = new Hashtable<String, String>();
+
+    public MqttConnectionFactory(Parameter passedInParameter) {
+        this.name = passedInParameter.getName();
+        ParameterIncludeImpl parameterInclude = new ParameterIncludeImpl();
+
+        try {
+            parameterInclude.deserializeParameters((OMElement) passedInParameter.getValue());
+        } catch (AxisFault axisFault) {
+           log.error("Error while reading properties for MQTT Connection Factory " + name , axisFault);
+           throw new AxisMqttException(axisFault);
+        }
+
+        for (Object object : parameterInclude.getParameters()) {
+            Parameter parameter = (Parameter) object;
+            parameters.put(parameter.getName(), (String) parameter.getValue());
+        }
+    }
+
+    public MqttConnectionFactory(Hashtable<String,String> parameters) {
+        this.parameters = parameters;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public MqttClient getMqttClient(){
+        return createMqttClient();
+    }
+
+    private MqttClient createMqttClient() {
+        String mqttEndpointURL= "tcp://" + parameters.get(MqttConstants.MQTT_SERVER_HOST_NAME) + ":" +
+                parameters.get(MqttConstants.MQTT_SERVER_PORT);
+        String uniqueClientId = parameters.get(MqttConstants.MQTT_CLIENT_ID);
+        MqttClient mqttClient = null;
+        try {
+            mqttClient = new MqttClient(mqttEndpointURL,uniqueClientId);
+        } catch (MqttException e) {
+            log.error("Error while creating the MQTT client...", e);
+        }
+
+        return mqttClient;
+    }
+
+    public String getTopic(){
+        return parameters.get(MqttConstants.MQTT_TOPIC_NAME);
+    }
 }

@@ -16,5 +16,26 @@ package org.apache.axis2.transport.mqtt;/*
 * under the License.
 */
 
-public class MqttPublisherCallback {
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttTopic;
+
+public class MqttPublisherCallback implements MqttCallback {
+
+    private Log log = LogFactory.getLog(MqttPublisherCallback.class);
+
+    public void connectionLost(Throwable throwable) {
+        //ignoring for the moment...
+    }
+
+    public void messageArrived(MqttTopic mqttTopic, MqttMessage mqttMessage) throws Exception {
+        throw new IllegalStateException();
+    }
+
+    public void deliveryComplete(MqttDeliveryToken mqttDeliveryToken) {
+        log.info("message delivered .. : " + mqttDeliveryToken.toString() );
+    }
 }

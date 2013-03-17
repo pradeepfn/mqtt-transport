@@ -16,5 +16,36 @@ package org.apache.axis2.transport.mqtt;/*
 * under the License.
 */
 
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ParameterInclude;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class MqttConnectionFactoryManager {
+
+      private Log log = LogFactory.getLog(MqttConnectionFactoryManager.class);
+      private Map<String,MqttConnectionFactory> connectionFactoryMap = new HashMap<String, MqttConnectionFactory>();
+
+
+    public MqttConnectionFactoryManager(ParameterInclude trpDesc) {
+        loadConnectionFactoryDefinitions(trpDesc);
+    }
+
+    private void loadConnectionFactoryDefinitions(ParameterInclude trpDesc) {
+        for (Parameter parameter : trpDesc.getParameters()) {
+            try {
+                MqttConnectionFactory mqttConnectionFactory = new MqttConnectionFactory(parameter);
+                connectionFactoryMap.put(mqttConnectionFactory.getName(), mqttConnectionFactory);
+            } catch (AxisMqttException e) {
+                log.error("Error setting up connection factory : " + parameter.getName(), e);
+            }
+        }
+    }
+
+    public MqttConnectionFactory getMqttConnectionFactory(String name) {
+        return connectionFactoryMap.get(name);
+    }
 }

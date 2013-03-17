@@ -16,5 +16,73 @@ package org.apache.axis2.transport.mqtt;/*
 * under the License.
 */
 
-public class MqttEndpoint {
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.ParameterInclude;
+import org.apache.axis2.transport.base.ProtocolEndpoint;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class MqttEndpoint extends ProtocolEndpoint {
+
+    private Log log = LogFactory.getLog(MqttEndpoint.class);
+
+    private Set<EndpointReference> endpointReferences = new HashSet<EndpointReference>();
+    private MqttListener mqttListener;
+    private MqttConnectionFactory mqttConnectionFactory;
+
+    public MqttEndpoint(MqttListener mqttListener) {
+        this.mqttListener = mqttListener;
+    }
+
+    @Override
+    public boolean loadConfiguration(ParameterInclude parameterInclude) throws AxisFault {
+        if (!(parameterInclude instanceof AxisService)) {
+            return false;
+        }
+
+        AxisService service = (AxisService)parameterInclude;
+
+        mqttConnectionFactory = mqttListener.getConnectionFactory(service);
+        if (mqttConnectionFactory == null) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public EndpointReference[] getEndpointReferences(AxisService axisService, String ip) throws AxisFault {
+        return new EndpointReference[0];
+    }
+
+    public void subscribeToTopic(ConfigurationContext configurationContext) {
+       MqttClient mqttClient = mqttConnectionFactory.getMqttClient();
+        try {
+            mqttClient.setCallback(new MqttListenerCallback(configurationContext));
+        } catch (MqttException e) {
+           log.error("Error while registering client callback.. " , e);
+        }
+        try {
+            mqttClient.connect();
+        } catch (MqttException e) {
+            log.error("Error while connecting to the remote server...", e);
+        }
+        try {
+            mqttClient.subscribe(mqttConnectionFactory.getTopic());
+        } catch (MqttException e) {
+            log.error("Error while subscribing to a topic ... : ", e);
+        }
+
+    }
+
+    public void unsubscribeFromTopic() {
+        // have to handle this scenario..
+    }
 }

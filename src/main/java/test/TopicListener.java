@@ -16,5 +16,43 @@ package test;/*
 * under the License.
 */
 
+import org.eclipse.paho.client.mqttv3.*;
+
 public class TopicListener {
-}
+
+        private static String SERVER_URL = "tcp://m2m.eclipse.org:1883";
+        private static String CLIENT_ID = "pradeepClientListener";
+
+    public static void main(String[] args) throws MqttException {
+
+
+        MqttClient mqttClient = new MqttClient(SERVER_URL,CLIENT_ID);
+        MqttConnectOptions cleintOptions = new MqttConnectOptions(); // lets keep this to default..
+        mqttClient.setCallback(new MqttCallback() {
+            public void connectionLost(Throwable throwable) {
+                System.out.println("Connection lost...");
+            }
+
+            public void messageArrived(MqttTopic mqttTopic, MqttMessage mqttMessage) throws Exception {
+                System.out.println("Message arrived...");
+                System.out.println("Topic : " + mqttTopic.toString());
+                System.out.println("Message : " + mqttMessage.toString());
+            }
+
+            public void deliveryComplete(MqttDeliveryToken mqttDeliveryToken) {
+                System.out.println("Delivery complete....");
+                System.out.println("Delivery Token : " + mqttDeliveryToken.toString());
+            }
+        });
+        mqttClient.connect(cleintOptions); // actual connection happens
+
+        if (mqttClient.isConnected()) {
+            System.out.println("Mqtt client connected successfully...");
+            MqttTopic topic = mqttClient.getTopic("testTopic");
+            mqttClient.subscribe("testTopic");
+
+        }
+
+    }
+    }
+

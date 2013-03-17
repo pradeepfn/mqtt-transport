@@ -16,5 +16,35 @@ package org.apache.axis2.transport.mqtt;/*
 * under the License.
 */
 
-public class MqttListenerCallback {
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.engine.AxisEngine;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttTopic;
+
+public class MqttListenerCallback implements MqttCallback{
+
+    private  ConfigurationContext configurationContext;
+
+    public MqttListenerCallback(ConfigurationContext configurationContext) {
+        this.configurationContext = configurationContext;
+    }
+
+    public void connectionLost(Throwable throwable) {
+        // lets ignore this for the moment, till we get proper exception handling in place..
+    }
+
+    public void messageArrived(MqttTopic mqttTopic, MqttMessage mqttMessage) throws Exception {
+        //build the message and hand it over to axisEngine
+        MessageContext messageContext = configurationContext.createMessageContext();
+        MqttUtils.setSOAPEnvelope(mqttMessage,messageContext,null);
+        AxisEngine.receive(messageContext);
+
+    }
+
+    public void deliveryComplete(MqttDeliveryToken mqttDeliveryToken) {
+       throw new IllegalStateException();
+    }
 }
