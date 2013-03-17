@@ -27,9 +27,11 @@ import org.eclipse.paho.client.mqttv3.MqttTopic;
 public class MqttListenerCallback implements MqttCallback{
 
     private  ConfigurationContext configurationContext;
+    private MqttEndpoint mqttEndpoint;
 
-    public MqttListenerCallback(ConfigurationContext configurationContext) {
-        this.configurationContext = configurationContext;
+    public MqttListenerCallback(MqttEndpoint mqttEndpoint) {
+        //this.configurationContext = configurationContext;
+        this.mqttEndpoint = mqttEndpoint;
     }
 
     public void connectionLost(Throwable throwable) {
@@ -38,7 +40,7 @@ public class MqttListenerCallback implements MqttCallback{
 
     public void messageArrived(MqttTopic mqttTopic, MqttMessage mqttMessage) throws Exception {
         //build the message and hand it over to axisEngine
-        MessageContext messageContext = configurationContext.createMessageContext();
+        MessageContext messageContext = mqttEndpoint.createMessageContext();
         MqttUtils.setSOAPEnvelope(mqttMessage,messageContext,null);
         AxisEngine.receive(messageContext);
 

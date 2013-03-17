@@ -44,7 +44,7 @@ public class MqttUtils {
             throws AxisFault, AxisMqttException {
 
         if (contentType == null) {
-                contentType = "application/octet-stream";
+                contentType = "text/xml";         // TODO: hardcoding for the SOAP11 builder
         }
 
         int index = contentType.indexOf(';');

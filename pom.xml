@@ -24,12 +24,11 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.axis2</groupId>
-    <artifactId>mqtt-transport</artifactId>
+    <artifactId>axis2-transport-mqtt</artifactId>
     <version>1.0.0</version>
     <name>Apache Axis2 - Transport - MQTT</name>
     <description>Apache Axis2 - MQTT Transport</description>
     <packaging>bundle</packaging>
-  
       <build>
 	 <plugins>
             <plugin>
@@ -57,7 +56,6 @@
             </plugin>
         </plugins>
     </build>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.axis2</groupId>
@@ -70,8 +68,5 @@
             <version>1.0.0</version>
         </dependency>
     </dependencies>
-
-     
-
 </project>
 

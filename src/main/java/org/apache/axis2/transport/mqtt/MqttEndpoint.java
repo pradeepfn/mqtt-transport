@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttTopic;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -65,7 +66,7 @@ public class MqttEndpoint extends ProtocolEndpoint {
     public void subscribeToTopic(ConfigurationContext configurationContext) {
        MqttClient mqttClient = mqttConnectionFactory.getMqttClient();
         try {
-            mqttClient.setCallback(new MqttListenerCallback(configurationContext));
+            mqttClient.setCallback(new MqttListenerCallback(this));
         } catch (MqttException e) {
            log.error("Error while registering client callback.. " , e);
         }

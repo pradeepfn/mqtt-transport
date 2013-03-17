@@ -63,6 +63,7 @@ public class MqttSender extends AbstractTransportSender {
             if(mqttClient.isConnected()){
                MqttTopic mqttTopic = mqttClient.getTopic(mqttConnectionFactory.getTopic());
                MqttMessage mqttMessage = createMqttMessage(messageContext);
+               mqttMessage.setRetained(true);
                mqttTopic.publish(mqttMessage);
             }
             mqttClient.disconnect();

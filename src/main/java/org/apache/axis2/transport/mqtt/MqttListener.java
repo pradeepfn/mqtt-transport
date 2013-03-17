@@ -51,7 +51,7 @@ public class MqttListener extends AbstractTransportListenerEx<MqttEndpoint> {
 
     public MqttConnectionFactory getConnectionFactory(AxisService service) {
 
-        Parameter conFacParam = service.getParameter(MqttConstants.PARAM_JMS_CONFAC);
+        Parameter conFacParam = service.getParameter(MqttConstants.PARAM_MQTT_CONFAC);
         // validate connection factory name (specified or default)
         if (conFacParam != null) {
             return connectionFactoryManager.getMqttConnectionFactory((String) conFacParam.getValue());

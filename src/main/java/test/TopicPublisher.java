@@ -22,6 +22,15 @@ public class TopicPublisher {
 
     private static String SERVER_URL = "tcp://m2m.eclipse.org:1883";
     private static String CLIENT_ID = "pradeepClientPublisher";
+    private static String PAYLOAD =  "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
+            "   <soapenv:Header/>\n" +
+            "<soapenv:Body>\n" +
+            "       <p:echoInt xmlns:p=\"http://echo.services.core.carbon.wso2.org\">\n" +
+            "      <in>" + 3 + "</in>\n" +
+            "   </p:echoInt>\n" +
+            "   </soapenv:Body>\n" +
+            "</soapenv:Envelope>";
+
 
     public static void main(String[] args) throws MqttException {
 
@@ -48,9 +57,9 @@ public class TopicPublisher {
 
         if (mqttClient.isConnected()) {
             System.out.println("Mqtt client connected successfully...");
-            MqttTopic topic = mqttClient.getTopic("testTopic");
+            MqttTopic topic = mqttClient.getTopic("esb.test1");
             MqttMessage message = new MqttMessage();
-            message.setPayload(new String("Hello World2").getBytes());
+            message.setPayload(PAYLOAD.getBytes());
             message.setRetained(true);
             topic.publish(message);
 
