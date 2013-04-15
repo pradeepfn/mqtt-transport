@@ -20,13 +20,13 @@ import org.eclipse.paho.client.mqttv3.*;
 
 public class TopicPublisher {
 
-    private static String SERVER_URL = "tcp://m2m.eclipse.org:1883";
+    private static String SERVER_URL = "tcp://localhost:1883";
     private static String CLIENT_ID = "pradeepClientPublisher";
     private static String PAYLOAD =  "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n" +
             "   <soapenv:Header/>\n" +
             "<soapenv:Body>\n" +
             "       <p:echoInt xmlns:p=\"http://echo.services.core.carbon.wso2.org\">\n" +
-            "      <in>" + 3 + "</in>\n" +
+            "      <in>" + 10 + "</in>\n" +
             "   </p:echoInt>\n" +
             "   </soapenv:Body>\n" +
             "</soapenv:Envelope>";

@@ -23,9 +23,9 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.OutTransportInfo;
-import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.base.AbstractTransportSender;
 import org.apache.axis2.transport.base.BaseUtils;
+import org.apache.axis2.util.MessageProcessorSelector;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -76,7 +76,7 @@ public class MqttSender extends AbstractTransportSender {
         OMOutputFormat format = BaseUtils.getOMOutputFormat(messageContext);
         MessageFormatter messageFormatter = null;
         try {
-            messageFormatter = TransportUtils.getMessageFormatter(messageContext);
+            messageFormatter = MessageProcessorSelector.getMessageFormatter(messageContext);
         } catch (AxisFault axisFault) {
             throw new AxisMqttException("Unable to get the message formatter to use");
         }

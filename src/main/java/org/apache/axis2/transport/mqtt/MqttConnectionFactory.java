@@ -40,7 +40,7 @@ public class MqttConnectionFactory {
         ParameterIncludeImpl parameterInclude = new ParameterIncludeImpl();
 
         try {
-            parameterInclude.deserializeParameters((OMElement) passedInParameter.getValue());
+            parameterInclude.deserializeParameters((OMElement) passedInParameter.getParameterElement());
         } catch (AxisFault axisFault) {
            log.error("Error while reading properties for MQTT Connection Factory " + name , axisFault);
            throw new AxisMqttException(axisFault);
